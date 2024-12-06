@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat App</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 20px; }
+        #messages { list-style: none; padding: 0; max-height: 300px; overflow-y: auto; }
+        #messages li { margin-bottom: 10px; }
+        input { padding: 10px; width: calc(100% - 20px); }
+    </style>
+</head>
+<body>
+    <h1>WebSocket Chat</h1>
+    <ul id="messages"></ul>
+    <input id="messageInput" type="text" placeholder="Type a message..." autofocus />
+    <script>
+        const ws = new WebSocket(`ws://${location.host}`);
+        const messages = document.getElementById('messages');
+        const messageInput = document.getElementById('messageInput');
+
+        ws.onmessage = (event) => {
+            const li = document.createElement('li');
+            li.textContent = event.data; // Display the received message as is
+            messages.appendChild(li);
+            messages.scrollTop = messages.scrollHeight;
+        };
+
+        messageInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && messageInput.value.trim()) {
+                ws.send(messageInput.value.trim()); // Send the user's message
+                messageInput.value = '';
+            }
+        });
+    </script>
+</body>
+</html>
